@@ -5,6 +5,8 @@ export const POST_REGISTER = "/signup";
 export const POST_LOGIN = "/signin";
 export const POST_VERIFY = "/verify";
 export const POST_UPDATE_PROFILE= "/updateprofile";
+export const GET_UPDATE_PROFILE= "/getupdateprofile";
+export const GET_COMPANY_DETAILS= "/getvendorcompanydetails";
 export const POST_UPDATE_COMPANY_PROFILE= "/vendorcompanydetails";
 export const POST_CREATE_NEW_PASSWORD = "/reset";
 export const POST_FAKE_JWT_LOGIN = "/post-jwt-login";
@@ -153,6 +155,7 @@ export const DELETE_INVOICE_LIST = "/delete-invoicelist";
 export const GET_PRODUCT = "/getproducts";
 export const ADD_NEW_PRODUCT = "/add/product";
 export const ADD_NEW_PRODUCT_WITH_DETAILED_INFO = "/addproduct";
+export const GET_PROFILE = "/edit/product";
 export const UPDATE_PRODUCT = "/edit/product";
 export const DELETE_PRODUCT = "/delete/product";
 

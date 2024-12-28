@@ -73,8 +73,30 @@ class APIClient {
   /**
    * post given data to url
    */
-  create = (url: any, data: any) => {
-    return axios.post(url, data);
+  create = (url: any, data: any, config?: axios.AxiosRequestConfig<any>, appendFiles: (formData: FormData) => void = () => {} ) => {
+    if (config) {
+      if (!!config.headers && "Content-Type" in config.headers &&  config.headers['Content-Type'] === "multipart/form-data") {
+        const formData =  new FormData();
+          Object.keys(data).forEach((key) => {
+              formData.append(key, data[key]);
+          });
+          appendFiles(formData);
+        // formData.append()
+        console.log(formData);
+        return axios.post(url, formData, config);
+      }
+      return axios.post(url, data, config);
+
+      // config?  {
+      //   headers: {
+            
+      //     "Content-Type": "multipart/form-data",
+      //   }
+      // }
+    } else {
+
+      return axios.post(url, data);
+    }
   };
   /**
    * Updates data

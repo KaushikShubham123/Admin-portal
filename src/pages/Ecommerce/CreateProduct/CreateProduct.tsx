@@ -16,6 +16,9 @@ const CreateProduct = () => {
 
   const [selectfeils, setSelectfeils] = useState([]);
   const [selectgalleryfeils, setSelectgalleryfeils] = useState([]);
+  const [specifications, setSpecifications] = useState([{ key: "", value: "" }]);
+
+
 
   const formik = useFormik({
     initialValues: {
@@ -29,7 +32,8 @@ const CreateProduct = () => {
       tags: "",
       exchangeable: false,
       refundable: false,
-      
+      specifications:"",
+      // productImages:[],
       
       productDesc: "",
 
@@ -44,31 +48,40 @@ const CreateProduct = () => {
     },
     validationSchema: Yup.object({
       // Product info
-      productTitle: Yup.string().required("Please Enter Your Product Title"),
-      categories: Yup.string().required("Please Enter Your Product Category"),
-      productType: Yup.string().required("Please Enter Your Product Type"),
-      shortDesc: Yup.string().required("Please Enter Your Product Short discription"),
-      brand: Yup.string().required("Please Enter Your Product Brand"),
-      // unit: Yup.string().required("Please Enter Your Product Unit"),
-      // tags: Yup.string().required("Please Enter Your Product tags"),
-      // product general info
-      manufacturerName: Yup.string().required("Please Enter manufacturer name"),
-      manufacturerBrand: Yup.string().required(
-        "Please Enter manufacturer brand"
-      ),
-      productDesc: Yup.string().required("Please Enter Your Product Description in detail"),
-      exchangeable: Yup.boolean().optional(),
-      refundable: Yup.boolean().optional(),
-      stocks: Yup.string().required("Please Enter product Stocks"),
-      price: Yup.string().required("Please Enter Your Product Price"),
-      discount: Yup.string().required("Please Enter Your Product Discount"),
-      status: Yup.string().required("Please Enter Your Product Status"),
-      visibility: Yup.string().required("Please Enter Your Product Visibility"),
+      // productTitle: Yup.string().required("Please Enter Your Product Title"),
+      // categories: Yup.string().required("Please Enter Your Product Category"),
+      // productType: Yup.string().required("Please Enter Your Product Type"),
+      // shortDesc: Yup.string().required("Please Enter Your Product Short discription"),
+      // brand: Yup.string().required("Please Enter Your Product Brand"),
+      // // unit: Yup.string().required("Please Enter Your Product Unit"),
+      // // tags: Yup.string().required("Please Enter Your Product tags"),
+      // // product general info
+      // manufacturerName: Yup.string().required("Please Enter manufacturer name"),
+      // manufacturerBrand: Yup.string().required(
+      //   "Please Enter manufacturer brand"
+      // ),
+      // productDesc: Yup.string().required("Please Enter Your Product Description in detail"),
+      // exchangeable: Yup.boolean().optional(),
+      // refundable: Yup.boolean().optional(),
+      // stocks: Yup.string().required("Please Enter product Stocks"),
+      // price: Yup.string().required("Please Enter Your Product Price"),
+      // discount: Yup.string().required("Please Enter Your Product Discount"),
+      // status: Yup.string().required("Please Enter Your Product Status"),
+      // visibility: Yup.string().required("Please Enter Your Product Visibility"),
     }),
     onSubmit: (values) => {
       console.log("in fomik submit");
-      handleProductCreation(values);
-      
+       const payload = {
+        ...values,
+        productImages: [...selectfeils, ...selectgalleryfeils],
+        specifications: JSON.stringify(specifications), // Convert specifications to JSON string if required
+      };
+
+      console.log("Form data to send:", payload);
+      handleProductCreation(payload);
+      //    const productImages=[  ...selectfeils , ...selectgalleryfeils]
+      // handleProductCreation({...values, productImages,specifications});
+
     },
 
   });
@@ -89,6 +102,24 @@ const CreateProduct = () => {
     }
   };
 
+
+  const handleSpecificationChange = (index: number, field: "key" | "value", value: string) => {
+    const updatedSpecifications = [...specifications];
+    updatedSpecifications[index][field] = value;
+    setSpecifications(updatedSpecifications);
+    console.log('updated specification',updatedSpecifications)
+  };
+
+  const addSpecification = () => {
+    setSpecifications([...specifications, { key: "", value: "" }]);
+  };
+
+  const removeSpecification = (index:number) => {
+    const updatedSpecifications = specifications.filter((_, i) => i !== index);
+    setSpecifications(updatedSpecifications);
+    console.log("specification-updated",updatedSpecifications)
+  };
+
   const handleAcceptfiles = (files: any) => {
     files?.map((file: any) => {
       return Object.assign(file, {
@@ -98,6 +129,7 @@ const CreateProduct = () => {
     });
     setSelectfeils(files);
   };
+  console.log("df", selectfeils)
 
   function formatBytes(bytes: any, decimals = 2) {
     if (bytes === 0) return "0 Bytes";
@@ -157,6 +189,49 @@ const CreateProduct = () => {
               <Col lg={12}>
                 <Card>
                   <Card.Body>
+                    <Card.Title className="mb-3">Specifications</Card.Title>
+                    {specifications.map((spec, index) => (
+                      <Row key={index} className="mb-3">
+                        <Col md={5}>
+                          <Form.Control
+                            type="text"
+                            placeholder="Specification Key"
+                            value={spec.key}
+                            onChange={(e) => handleSpecificationChange(index, "key", e.target.value)}
+                          />
+                        </Col>
+                        <Col md={5}>
+                          <Form.Control
+                            type="text"
+                            placeholder="Specification Value"
+                            value={spec.value}
+                            onChange={(e) => handleSpecificationChange(index, "value", e.target.value)}
+                          />
+                        </Col>
+                        <Col md={2}>
+                          <Button
+                            variant="danger"
+                            onClick={() => removeSpecification(index)}
+                          >
+                            Remove
+                          </Button>
+                        </Col>
+                      </Row>
+                    ))}
+                    <Button variant="success" onClick={addSpecification}>
+                      Add Specification
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+
+
+
+            <Row>
+              <Col lg={12}>
+                <Card>
+                  <Card.Body>
                     <Row>
                       <Col xxl={4}>
                         <Card.Title className="mb-3">Description</Card.Title>
@@ -201,7 +276,7 @@ const CreateProduct = () => {
                 </Card>
               </Col>
             </Row>
-            {/* <Row>
+            <Row>
             <Col lg={12}>
               <Card>
                 <Card.Body>
@@ -221,10 +296,11 @@ const CreateProduct = () => {
                         </Form.Label>
                         <Dropzone
                           onDrop={(acceptfiles: any) => {
+                            console.log("drop")
                             handleAcceptfiles(acceptfiles);
                           }}
                         >
-                          {({ getRootProps }: any) => (
+                          {({ getRootProps,getInputProps  }: any) => (
                             <div className="dropzone dz-clickable text-center">
                               <div
                                 className="dz-message needsclick"
@@ -234,6 +310,7 @@ const CreateProduct = () => {
                                   <i className="display-4 text-muted ri-upload-cloud-2-fill" />
                                 </div>
                                 <h4>
+                                        <input {...getInputProps()} />
                                   Drop product images here or click to upload.
                                 </h4>
                               </div>
@@ -311,7 +388,7 @@ const CreateProduct = () => {
                               handleAcceptgalleryfiles(acceptfiles);
                             }}
                           >
-                            {({ getRootProps }: any) => (
+                            {({ getRootProps , getInputProps  }: any) => (
                               <div className="dropzone dz-clickable text-center">
                                 <div
                                   className="dz-message needsclick"
@@ -321,6 +398,7 @@ const CreateProduct = () => {
                                     <i className="display-4 text-muted ri-upload-cloud-2-fill" />
                                   </div>
                                   <h4>
+                                  <input {...getInputProps()} />
                                     Drop gallery images here or click to upload.
                                   </h4>
                                 </div>
@@ -397,7 +475,7 @@ const CreateProduct = () => {
                 </Card.Body>
               </Card>
             </Col>
-          </Row> */}
+          </Row>
             <Productgeneralinformation formik={formik} />
             {/* Ramana-ReactJs_v1.0/Ramana_ReactJs/Admin/src/pages/Ecommerce/Product/productscript.tsx */}
             <div className="hstack gap-2 justify-content-end mb-3">

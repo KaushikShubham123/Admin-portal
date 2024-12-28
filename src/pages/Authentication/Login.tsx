@@ -56,8 +56,8 @@ const Signin = (props: any) => {
     enableReinitialize: true,
 
     initialValues: {
-      email: userLogin.email || "Enter your email" || "",
-      password: userLogin.password || "Enter your password" || "",
+      email: userLogin.email || "" ,
+      password: userLogin.password || "",
     },
     validationSchema: Yup.object({
       email: Yup.string().required("Please Enter Your Email"),
@@ -111,14 +111,14 @@ const Signin = (props: any) => {
                 >
                   <Form.Group className="mb-3" controlId="formUsername">
                     <Form.Label>
-                      Username <span className="text-danger">*</span>
+                      User Email <span className="text-danger">*</span>
                     </Form.Label>
                     <div className="position-relative">
                       <Form.Control
                         type="email"
                         name="email"
                         className="form-control password-input"
-                        placeholder="Enter username"
+                        placeholder="Enter user email"
                         required
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}

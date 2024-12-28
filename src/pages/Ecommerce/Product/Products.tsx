@@ -42,7 +42,7 @@ const Products = () => {
   );
 
   const { products } = useSelector(selectProductList);
-console.log("p", products)
+ console.log("p", products)
   const [productTable, setProductTable] = useState<any>([]);
   const [edit, setEdit] = useState<any>([]);
   const [filter, setFilter] = useState<any>("");
@@ -237,6 +237,12 @@ console.log("p", products)
         Filter: false,
         isSortable: true,
       },
+      // {
+      //   Header: "Specifications",
+      //   accessor: "specifications",
+      //   Filter: false,
+      //   isSortable: true,
+      // },
       {
         Header: "Tags",
         accessor: "tags",
@@ -268,6 +274,9 @@ console.log("p", products)
         accessor: "productDesc",
         Filter: false,
         isSortable: true,
+        // Cell:({value}:{value:string})=>{
+        //   <div className="text-wrap  text-break">{value}</div>
+        // }
       },
      
       {

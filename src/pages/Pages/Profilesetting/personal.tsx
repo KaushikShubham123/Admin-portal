@@ -1,15 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Nav, Row, Tab } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Flatpickr from "react-flatpickr";
 import {
   updateProfile,
   updateCompanyProfile,
+  getUpdateProfile,
+  getCompanyDetails,
 } from "../../../helpers/fakebackend_helper"; // Import your helper function
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
+interface FormData {
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  dob: string;
+  city: string;
+  country: string;
+  zipCode: string;
+  address: string;
+  companyName: string;
+  companyRegisteredNumber: string;
+  companyMobileNumber: string;
+  companyEmailAddress: string;
+  companyRegisteredDate: string;
+  companyAddress: string;
+  companyCity: string;
+  companyCountry: string;
+  companyZipcode: string;
+}
 
 const Personal = () => {
+  const [profileData, setProfileData] = useState<FormData | null>(null);
+  const [companyData, setCompanyData] = useState<FormData | null>(null);
   const selectAccount = createSelector(
     (state: any) => state.Login,
     (login) => ({
@@ -40,6 +63,53 @@ const Personal = () => {
     companyCountry: "",
     companyZipcode: "",
   });
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const profileResponse = await getUpdateProfile(user.id);
+      const companyResponse = await getCompanyDetails(user.id);
+
+      setProfileData(profileResponse.data);
+      setCompanyData(companyResponse.data[0]);
+    };
+
+    fetchData();
+  }, [user.id]);
+
+  useEffect(() => {
+    if (profileData) {
+      setFormData((prevState) => ({
+        ...prevState, // Retain previous state properties
+        firstName: profileData.firstName || "",
+        lastName: profileData.lastName || "",
+        mobile: profileData.mobile || "",
+
+        dob: profileData.dob || "",
+        city: profileData.city || "",
+        country: profileData.country || "",
+        zipCode: profileData.zipCode || "",
+        address: profileData.address || "",
+      }));
+    }
+  }, [profileData]);
+
+  useEffect(() => {
+    if (companyData) {
+      setFormData((prevState) => ({
+        ...prevState,// Retain previous state properties
+        companyName: companyData.companyName || "",
+        companyRegisteredNumber: companyData.companyRegisteredNumber || "",
+        companyMobileNumber: companyData.companyMobileNumber || "",
+        companyEmailAddress: companyData.companyEmailAddress || "",
+        companyRegisteredDate: companyData.companyRegisteredDate || "",
+        companyAddress: companyData.companyAddress || "",
+        companyCity: companyData.companyCity || "",
+        companyCountry: companyData.companyCountry || "",
+        companyZipcode: companyData.companyZipcode || "",
+        // video:""
+      }));
+    }
+  }, [companyData]);
 
   // Step 2: Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,6 +150,8 @@ const Personal = () => {
       console.error("Error updating profile:", error);
     }
   };
+
+
   const handleCompanySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -95,7 +167,9 @@ const Personal = () => {
       console.error("Error updating profile:", error);
     }
   };
-
+  console.log("profileData", profileData);
+  console.log("companyData", companyData);
+  console.log("formData",formData)
   return (
     <React.Fragment>
       <Col xl={9}>
@@ -157,6 +231,7 @@ const Personal = () => {
                             id="lastName"
                             value={formData.lastName}
                             onChange={handleChange}
+                            // value={profileData.lastName || ""}
                             placeholder="Enter your last name"
                           />
                         </div>
@@ -258,7 +333,7 @@ const Personal = () => {
                       <Col lg={12}>
                         <div className="hstack gap-2 justify-content-end">
                           <Button type="submit" variant="primary">
-                            Update
+                            Submit
                           </Button>
                           <Button
                             type="button"
@@ -422,7 +497,7 @@ const Personal = () => {
                       <Col lg={12}>
                         <div className="hstack gap-2 justify-content-end">
                           <Button type="submit" variant="primary">
-                            Update
+                            Submit
                           </Button>
                           <Button
                             type="button"
@@ -446,210 +521,4 @@ const Personal = () => {
 
 export default Personal;
 
-// import React, { useState } from "react";
-// import {
-//   Button,
-//   Card,
-//   Col,
-//   Form,
-//   Nav,
-//   Row,
-//   Tab /* Table */,
-// } from "react-bootstrap";
-// import { Link } from "react-router-dom";
-// import Flatpickr from "react-flatpickr";
-// import { updateProfile } from "../../../helpers/fakebackend_helper";
 
-// const Personal = () => {
-//   //   const [text, setText] = useState("");
-
-//   return (
-//     <React.Fragment>
-//       <Col xl={9}>
-//         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
-//           <Row className="d-flex align-items-center flex-wrap gap-2 mb-4">
-//             <div className="col-md order-1">
-//               <Nav
-//                 variant="pills"
-//                 className="arrow-navtabs nav-secondary gap-2 flex-grow-1"
-//               >
-//                 <Nav.Item>
-//                   <Nav.Link eventKey="first" href="#personalDetails">
-//                     Personal Details
-//                   </Nav.Link>
-//                 </Nav.Item>
-//                 <Nav.Item>
-//                   <Nav.Link eventKey="second" href="#changePassword">
-//                     Changes Password
-//                   </Nav.Link>
-//                 </Nav.Item>
-//               </Nav>
-//             </div>
-//             <div className="col-md-auto order-lg-2">
-//               <Link to="/pages-profile-settings" className="btn btn-secondary">
-//                 <i className="bi bi-pencil-square align-baseline me-1"></i> Edit
-//                 Profile
-//               </Link>
-//             </div>
-//           </Row>
-//           <Tab.Content>
-//             <Tab.Pane eventKey="first" id="personalDetails">
-//               <Card>
-//                 <Card.Header>
-//                   <h6 className="card-title mb-0">Personal Details</h6>
-//                 </Card.Header>
-//                 <Card.Body>
-//                   <Form action="#">
-//                     <Row>
-//                       <Col lg={6}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="firstnameInput">
-//                             First Name
-//                           </Form.Label>
-//                           <Form.Control
-//                             type="text"
-//                             id="firstnameInput"
-//                             placeholder="Enter your firstname"
-//                             defaultValue=""
-//                           />
-//                         </div>
-//                       </Col>
-
-//                       <Col lg={6}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="">Last Name</Form.Label>
-//                           <Form.Control
-//                             type="text"
-//                             id="lastnameInput"
-//                             placeholder="Enter your last name"
-//                             defaultValue=""
-//                           />
-//                         </div>
-//                       </Col>
-
-//                       <Col lg={6}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="phonenumberInput">
-//                             Mobile
-//                           </Form.Label>
-//                           <Form.Control
-//                             type="text"
-//                             id="phonenumberInput"
-//                             placeholder="Enter your phone number"
-//                             defaultValue=""
-//                           />
-//                         </div>
-//                       </Col>
-
-//                       <Col lg={6}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="emailInput">
-//                             Email Address
-//                           </Form.Label>
-//                           <Form.Control
-//                             type="email"
-//                             id="emailInput"
-//                             placeholder="Enter your email"
-//                             defaultValue=""
-//                           />
-//                         </div>
-//                       </Col>
-
-//                       <Col lg={6}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="JoiningdatInput">
-//                             Birth of Date
-//                           </Form.Label>
-//                           <Flatpickr
-//                             className="form-control"
-//                             options={{
-//                               dateFormat: "d M, Y",
-//                             }}
-//                             placeholder="Select date"
-//                             defaultValue=""
-//                           />
-//                         </div>
-//                       </Col>
-
-//                       <Col lg={4}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="cityInput">City</Form.Label>
-//                           <Form.Control
-//                             type="text"
-//                             id="cityInput"
-//                             placeholder="City"
-//                             defaultValue=""
-//                           />
-//                         </div>
-//                       </Col>
-
-//                       <Col lg={4}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="countryInput">
-//                             Country
-//                           </Form.Label>
-//                           <Form.Control
-//                             type="text"
-//                             id="countryInput"
-//                             placeholder="Country"
-//                             defaultValue=""
-//                           />
-//                         </div>
-//                       </Col>
-
-//                       <Col lg={4}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="zipcodeInput">
-//                             Zip Code
-//                           </Form.Label>
-//                           <Form.Control
-//                             type="text"
-//                             minLength={5}
-//                             maxLength={6}
-//                             id="zipcodeInput"
-//                             placeholder="Enter zipcode"
-//                             defaultValue="00012"
-//                           />
-//                         </div>
-//                       </Col>
-//                       <Col lg={6}>
-//                         <div className="mb-3">
-//                           <Form.Label htmlFor="addressInput">
-//                             Address
-//                           </Form.Label>
-//                           <Form.Control
-//                             type="text"
-//                             id="addressInput"
-//                             placeholder="Enter your Address here"
-//                             defaultValue=""
-//                           />
-//                         </div>
-//                       </Col>
-
-//                       <Col lg={12}>
-//                         <div className="hstack gap-2 justify-content-end">
-//                           <Button
-//                             type="submit"
-//                             variant="primary"
-//                             onClick={updateProfile}
-//                           >
-//                             Updates
-//                           </Button>
-//                           <Button className="btn btn-subtle-danger">
-//                             Cancel
-//                           </Button>
-//                         </div>
-//                       </Col>
-//                     </Row>
-//                   </Form>
-//                 </Card.Body>
-//               </Card>
-//             </Tab.Pane>
-//           </Tab.Content>
-//         </Tab.Container>
-//       </Col>
-//     </React.Fragment>
-//   );
-// };
-
-// export default Personal;

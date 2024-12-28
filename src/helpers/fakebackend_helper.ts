@@ -25,6 +25,10 @@ export const postLogin = (data: any) => api.create(url.POST_LOGIN, data);
 // VERIFY Method
 export const verifyOtp = (data: any) => api.create(url.POST_VERIFY, data);
 export const updateProfile = (data: any) => api.create(url.POST_UPDATE_PROFILE, data);
+export const getUpdateProfile = (data: any) => api.get(url.GET_UPDATE_PROFILE, data);
+export const getCompanyDetails = (data: any) => api.get(url.GET_COMPANY_DETAILS, data);
+
+
 export const updateCompanyProfile = (data: any) => api.create(url.POST_UPDATE_COMPANY_PROFILE, data);
 
 export const newPasswordCreate = (data: any) => api.create(url.POST_CREATE_NEW_PASSWORD, data);
@@ -237,7 +241,18 @@ export const deleteInvoiceList = (invoicelist: any) => api.delete(url.DELETE_INV
 export const getProducts = () => api.get(url.GET_PRODUCT, null);
 export const addNewProduct = (data: any) => api.create(url.ADD_NEW_PRODUCT, data);
 
-export const addNewProductWithDetailedInfo = (data: any) => api.create(url.ADD_NEW_PRODUCT_WITH_DETAILED_INFO, data);
+export const addNewProductWithDetailedInfo = (data: any) => api.create(url.ADD_NEW_PRODUCT_WITH_DETAILED_INFO, data, {
+  headers: {
+    "Content-Type": "multipart/form-data"
+  }
+}, (formData) => {
+          // Append each file in the productImages array to the FormData
+          data.productImages.forEach((file: File, index: number) => {
+            formData.append(`productImages`, file); // The key must match what the backend expects
+        });
+        delete data.productImages;
+
+});
 export const updateProduct = (data: any) => api.update(url.UPDATE_PRODUCT, data);
 export const deleteProducts = (data: any) => api.delete(url.DELETE_PRODUCT, { headers: { data } });
 
