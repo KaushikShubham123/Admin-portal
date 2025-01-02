@@ -25,11 +25,13 @@ export const postLogin = (data: any) => api.create(url.POST_LOGIN, data);
 // VERIFY Method
 export const verifyOtp = (data: any) => api.create(url.POST_VERIFY, data);
 export const updateProfile = (data: any) => api.create(url.POST_UPDATE_PROFILE, data);
+export const patchUpdateProfile = (data: any) => api.update(url.PATCH_UPDATE_PROFILE, data);
 export const getUpdateProfile = (data: any) => api.get(url.GET_UPDATE_PROFILE, data);
 export const getCompanyDetails = (data: any) => api.get(url.GET_COMPANY_DETAILS, data);
 
 
 export const updateCompanyProfile = (data: any) => api.create(url.POST_UPDATE_COMPANY_PROFILE, data);
+export const patchCompanyProfile = (data: any) => api.update(url.PATCH_UPDATE_COMPANY_PROFILE, data);
 
 export const newPasswordCreate = (data: any) => api.create(url.POST_CREATE_NEW_PASSWORD, data);
 

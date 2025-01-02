@@ -4,13 +4,16 @@ import { Link } from "react-router-dom";
 import Flatpickr from "react-flatpickr";
 import {
   updateProfile,
+  patchUpdateProfile,
   updateCompanyProfile,
+  patchCompanyProfile,
   getUpdateProfile,
   getCompanyDetails,
 } from "../../../helpers/fakebackend_helper"; // Import your helper function
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 interface FormData {
+  id: number;
   firstName: string;
   lastName: string;
   mobile: string;
@@ -63,7 +66,7 @@ const Personal = () => {
     companyCountry: "",
     companyZipcode: "",
   });
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const profileResponse = await getUpdateProfile(user.id);
@@ -96,7 +99,7 @@ const Personal = () => {
   useEffect(() => {
     if (companyData) {
       setFormData((prevState) => ({
-        ...prevState,// Retain previous state properties
+        ...prevState, // Retain previous state properties
         companyName: companyData.companyName || "",
         companyRegisteredNumber: companyData.companyRegisteredNumber || "",
         companyMobileNumber: companyData.companyMobileNumber || "",
@@ -140,11 +143,21 @@ const Personal = () => {
 
     // Step 4: Call updateProfile with formData
     try {
-      const response = await updateProfile(formData);
-      if (response) {
-        alert("Profile updated successfully");
+      // const profileDataExists = profileData.id
+      if (!profileData?.id) {
+        const response = await updateProfile(formData);
+        if (response) {
+          alert("Profile updated successfully");
+        } else {
+          alert("Failed to update profile");
+        }
       } else {
-        alert("Failed to update profile");
+        const response = await patchUpdateProfile(formData/* , creatorId:companyData.creatorId */);
+        if (response) {
+          alert("Profile updated successfully");
+        } else {
+          alert("Failed to update profile");
+        }
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -157,19 +170,45 @@ const Personal = () => {
 
     // Step 4: Call updateProfile with formData
     try {
-      const response = await updateCompanyProfile(formData);
-      if (response) {
-        alert("Company details updated successfully");
+      // const profileDataExists = profileData.id
+      if (!companyData?.id) {
+        const response = await updateCompanyProfile(formData);
+        if (response) {
+          alert("Profile updated successfully");
+        } else {
+          alert("Failed to update profile");
+        }
       } else {
-        alert("Failed to update Company details");
+        const response = await patchCompanyProfile(formData);
+        if (response) {
+          alert("Profile updated successfully");
+        } else {
+          alert("Failed to update profile");
+        }
       }
     } catch (error) {
       console.error("Error updating profile:", error);
     }
   };
+
+  // const handleCompanySubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   // Step 4: Call updateProfile with formData
+  //   try {
+  //     const response = await updateCompanyProfile(formData);
+  //     if (response) {
+  //       alert("Company details updated successfully");
+  //     } else {
+  //       alert("Failed to update Company details");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating profile:", error);
+  //   }
+  // };
   console.log("profileData", profileData);
   console.log("companyData", companyData);
-  console.log("formData",formData)
+  console.log("formData", formData);
   return (
     <React.Fragment>
       <Col xl={9}>
@@ -333,7 +372,7 @@ const Personal = () => {
                       <Col lg={12}>
                         <div className="hstack gap-2 justify-content-end">
                           <Button type="submit" variant="primary">
-                            Submit
+                         Update
                           </Button>
                           <Button
                             type="button"
@@ -497,7 +536,7 @@ const Personal = () => {
                       <Col lg={12}>
                         <div className="hstack gap-2 justify-content-end">
                           <Button type="submit" variant="primary">
-                            Submit
+                          Update
                           </Button>
                           <Button
                             type="button"
@@ -520,5 +559,3 @@ const Personal = () => {
 };
 
 export default Personal;
-
-
